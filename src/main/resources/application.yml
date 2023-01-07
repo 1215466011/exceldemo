@@ -6,3 +6,7 @@ spring:
   application:
     name: excelword
 
+excel:
+  fromPath: E:\textwork
+  toPath: E:\new work
+

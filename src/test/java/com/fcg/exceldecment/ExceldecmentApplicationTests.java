@@ -76,6 +76,7 @@ class ExceldecmentApplicationTests {
         cell.setCellValue("00123123131");
         cell.setCellStyle(style);
         cell.getCellStyle();
+
         row.createCell(1).setCellValue("01");
         row.createCell(2).setCellValue("02");
         row.createCell(3).setCellValue("03");
@@ -90,6 +91,40 @@ class ExceldecmentApplicationTests {
 
 
 
+        FileOutputStream outputStream = new FileOutputStream("E:\\textwork\\new work.xlsx");
+        workbook.write(outputStream);
+        outputStream.flush();
+        outputStream.close();
+        workbook.close();
+    }
+
+    //边框样式
+    @Test
+    void createstyle () throws IOException {
+        //创建一个工作簿
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        //创建一个sheet
+        Sheet sheet = workbook.createSheet("sheet1");
+        //这是样式
+        CellStyle style = workbook.createCellStyle();
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBottomBorderColor((short) 0);
+        style.setLeftBorderColor((short) 0);
+        style.setTopBorderColor((short) 0);
+        style.setRightBorderColor((short) 0);
+
+        //创建工作行
+        for (int ii = 0; ii < 5; ii++) {
+            Row row = sheet.createRow(ii);
+            for (int i = 0; i < 5; i++) {
+                Cell cell = row.createCell(i);
+                cell.setCellStyle(style);
+
+            }
+        }
         FileOutputStream outputStream = new FileOutputStream("E:\\textwork\\new work.xlsx");
         workbook.write(outputStream);
         outputStream.flush();

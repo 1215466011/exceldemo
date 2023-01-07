@@ -49,7 +49,6 @@ public class MyWork {
                     XSSFRow rowCreat = sheetCreat.createRow(i);
                 // 取得源有excel Sheet的行
                     XSSFRow row = sheet.getRow(i);
-
                 // 单元格式样
                     int firstCell = row.getFirstCellNum();
                     int lastCell = row.getLastCellNum();
@@ -59,10 +58,10 @@ public class MyWork {
                         sheetCreat.autoSizeColumn(nub, true);
                     }
                     for (int j = firstCell; j < lastCell; j++) {
-                        //去的源格子
-                        XSSFCell fromcell = row.getCell(j);
                         //新格子
                         XSSFCell tocell = rowCreat.getCell(j);
+                        //去的源格子
+                        XSSFCell fromcell = row.getCell(j);
                         //自适应行高
                         row.setZeroHeight(true);
                         //自适应列宽
@@ -70,9 +69,6 @@ public class MyWork {
                         String strVal ="";
                         double numValue=0;
                         boolean flag = true;
-
-                        //设置边框
-                        copyCellStyle(fromcell.getCellStyle(),wbCreat.createCellStyle());
                         if (row.getCell(j)==null) {
                         }else if(i>3 && (j==2 ||j==4) && i<35) {
                           //需求
@@ -92,7 +88,9 @@ public class MyWork {
                         }else{
                             rowCreat.getCell(j).setCellValue(strVal);
                         }
-
+                        //设置边框
+                       /* copyCellStyle(fromcell.getCellStyle(),wbCreat.createCellStyle());
+                        tocell.setCellStyle(wbCreat.createCellStyle());*/
                     }
                 }
             }
@@ -168,41 +166,7 @@ public class MyWork {
         toStyle.setBottomBorderColor(fromStyle.getBottomBorderColor());
         toStyle.setRightBorderColor(fromStyle.getRightBorderColor());
         toStyle.setLeftBorderColor(fromStyle.getLeftBorderColor());
-
-        System.out.println(fromStyle.getBorderTopEnum());
-        /*System.out.println(color);*/
-
-        //背景和前景
-        /*if(fromStyle instanceof  XSSFCellStyle){
-            if(fromStyle.getFillBackgroundColorColor()!=null){
-                System.out.println(fromStyle.getFillBackgroundColorColor());
-            }
-            if(fromStyle.getFillForegroundColorColor()!=null){
-                System.out.println(fromStyle.getFillForegroundColorColor());
-            }
-            toStyle.setFillBackgroundColor(fromStyle.getFillBackgroundColorColor());
-            toStyle.setFillForegroundColor(fromStyle.getFillForegroundColorColor());
-        }else {
-            toStyle.setFillBackgroundColor(fromStyle.getFillBackgroundColor());
-            toStyle.setFillForegroundColor(fromStyle.getFillForegroundColor());
-        }
-        toStyle.setDataFormat(fromStyle.getDataFormat());
-        toStyle.setFillPattern(fromStyle.getFillPatternEnum());*/
-//    toStyle.setFont(fromStyle.getFont(null)); // 没有提供get 方法
-       /* if (fromStyle instanceof XSSFCellStyle) {
-            // 处理字体获取：03版 xls
-            XSSFCellStyle style = (XSSFCellStyle) fromStyle;
-            toStyle.setFont(style.getFont());
-        } else if (fromStyle instanceof XSSFCellStyle) {
-            // 处理字体获取：07版以及之后 xlsx
-            XSSFCellStyle style = (XSSFCellStyle) fromStyle;
-            toStyle.setFont(style.getFont());
-        }*/
-        toStyle.setHidden(fromStyle.getHidden());
-        toStyle.setIndention(fromStyle.getIndention());//首行缩进
-        toStyle.setLocked(fromStyle.getLocked());
-        toStyle.setRotation(fromStyle.getRotation());//旋转
-        toStyle.setWrapText(fromStyle.getWrapText());
+        System.out.println("1");
     }
      private static void MergerRegion(XSSFSheet sheetCreat, XSSFSheet sheet) {
         int sheetMergerCount = sheet.getNumMergedRegions();
