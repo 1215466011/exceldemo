@@ -7,6 +7,6 @@ spring:
     name: excelword
 
 excel:
-  fromPath: E:\textwork
-  toPath: E:\new work
+  fromPath: E://textwork
+  toPath: E://new work
 

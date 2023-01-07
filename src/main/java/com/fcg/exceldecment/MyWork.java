@@ -1,5 +1,6 @@
 package com.fcg.exceldecment;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -69,24 +70,18 @@ public class MyWork {
                         String strVal ="";
                         double numValue=0;
                         boolean flag = true;
-                        if (row.getCell(j)==null) {
-                        }else if(i>3 && (j==2 ||j==4) && i<35) {
-                          //需求
-                            fromcell.setCellType(CellType.NUMERIC);
-                            numValue = fromcell.getNumericCellValue();
-
-                        }else {
-                            flag = false;
-                            fromcell.setCellType(CellType.STRING);
-                            strVal = fromcell.getStringCellValue();
-                            //TODO 目前报错
-                            //System.out.println(strVal);
-                            //strVal = removeInternalBlank(row.getCell(j).getStringCellValue());
-                        }
-                        if(flag){
-                            rowCreat.getCell(j).setCellValue(numValue);
-                        }else{
-                            rowCreat.getCell(j).setCellValue(strVal);
+                        if (row.getCell(j)==null) {}else{
+                            String cetype = fromcell.getCellTypeEnum().toString();
+                            fromcell.setCellType( fromcell.getCellTypeEnum());
+                            if("STRING".equals(cetype)){
+                                System.out.println("这个格子是字符串类型");
+                                strVal = fromcell.getStringCellValue();
+                                rowCreat.getCell(j).setCellValue(strVal);
+                            }else{
+                                System.out.println("这个格子是数据类型");
+                                numValue = fromcell.getNumericCellValue();
+                                rowCreat.getCell(j).setCellValue(numValue);
+                            }
                         }
                         //设置边框
                        /* copyCellStyle(fromcell.getCellStyle(),wbCreat.createCellStyle());
