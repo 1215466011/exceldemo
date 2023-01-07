@@ -1,5 +1,6 @@
 package com.fcg.exceldecment;
 
+import com.fcg.exceldecment.pojo.Tablesz;
 import javafx.scene.layout.Border;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -11,11 +12,33 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SpringBootTest
 class ExceldecmentApplicationTests {
+
+    //循环给对象赋值
+    @Test
+    void pojoforech(){
+        List<String> list = new ArrayList<String>();
+        list.add("zs");
+        list.add("ls");
+        list.add("ww");
+        list.add("zl");
+        Tablesz poj = new Tablesz();
+        Field[] declaredFields = poj.getClass().getDeclaredFields();
+        for (Field declaredField : declaredFields) {
+            System.out.println(declaredField.getName());
+        }
+
+
+
+    }
 
     //读取工作簿
     @Test
