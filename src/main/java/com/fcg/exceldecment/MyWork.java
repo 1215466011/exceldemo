@@ -13,6 +13,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 import org.w3c.dom.css.RGBColor;
 
+import javax.lang.model.element.VariableElement;
 import java.io.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -33,18 +34,22 @@ public class MyWork {
             excelName = excel.getName();
             String strExcelPath = fromPath + "\\" + excel.getName();
             XSSFWorkbook wb = new XSSFWorkbook(strExcelPath);
+            XSSFCellStyle wbStyle = wb.createCellStyle();
             for (int ii = 0; ii < wb.getNumberOfSheets(); ii++) {
                 XSSFSheet sheet = wb.getSheet("Sheet"+(ii+1));
+
                 XSSFSheet sheetCreat = wbCreat.createSheet(sheet.getSheetName());
                 // 复制源表中的合并单元格
                 MergerRegion(sheetCreat, sheet);
                 int firstRow = sheet.getFirstRowNum();
                 int lastRow = sheet.getLastRowNum();
+                System.out.println(firstRow+"-----"+lastRow);
                 for (int i = firstRow; i <= lastRow; i++) {
                 // 创建新建excel Sheet的行
                     XSSFRow rowCreat = sheetCreat.createRow(i);
                 // 取得源有excel Sheet的行
                     XSSFRow row = sheet.getRow(i);
+
                 // 单元格式样
                     int firstCell = row.getFirstCellNum();
                     int lastCell = row.getLastCellNum();
@@ -54,6 +59,10 @@ public class MyWork {
                         sheetCreat.autoSizeColumn(nub, true);
                     }
                     for (int j = firstCell; j < lastCell; j++) {
+                        //去的源格子
+                        XSSFCell fromcell = row.getCell(j);
+                        //新格子
+                        XSSFCell tocell = rowCreat.getCell(j);
                         //自适应行高
                         row.setZeroHeight(true);
                         //自适应列宽
@@ -61,20 +70,19 @@ public class MyWork {
                         String strVal ="";
                         double numValue=0;
                         boolean flag = true;
-                        //TODO 今天做到这里
-                        copyCellStyle(wbCreat,wb.getCellStyleAt(j),wbCreat.createCellStyle());
+
+                        //设置边框
+                        copyCellStyle(fromcell.getCellStyle(),wbCreat.createCellStyle());
                         if (row.getCell(j)==null) {
                         }else if(i>3 && (j==2 ||j==4) && i<35) {
                           //需求
-                            XSSFCell cell = row.getCell(j);
-                            cell.setCellType(CellType.NUMERIC);
-                            numValue = cell.getNumericCellValue();
+                            fromcell.setCellType(CellType.NUMERIC);
+                            numValue = fromcell.getNumericCellValue();
 
                         }else {
                             flag = false;
-                            XSSFCell cell = row.getCell(j);
-                            cell.setCellType(CellType.STRING);
-                            strVal = cell.getStringCellValue();
+                            fromcell.setCellType(CellType.STRING);
+                            strVal = fromcell.getStringCellValue();
                             //TODO 目前报错
                             //System.out.println(strVal);
                             //strVal = removeInternalBlank(row.getCell(j).getStringCellValue());
@@ -99,7 +107,6 @@ public class MyWork {
         wbCreat.close();
     }
     public static void copyCellStyle(XSSFWorkbook workbook, XSSFCellStyle fromStyle, XSSFCellStyle toStyle) {
-        XSSFColor color = new XSSFColor(new java.awt.Color(22, 253, 22));
         // 水平垂直对齐方式
         toStyle.setAlignment(fromStyle.getAlignmentEnum());
         toStyle.setVerticalAlignment(fromStyle.getVerticalAlignmentEnum());
@@ -108,15 +115,17 @@ public class MyWork {
         toStyle.setBorderLeft(fromStyle.getBorderLeftEnum());
         toStyle.setBorderRight(fromStyle.getBorderRightEnum());
         toStyle.setBorderTop(fromStyle.getBorderTopEnum());
+
         toStyle.setTopBorderColor(fromStyle.getTopBorderColor());
         toStyle.setBottomBorderColor(fromStyle.getBottomBorderColor());
-        toStyle.setRightBorderColor(color);
-        toStyle.setLeftBorderColor(color);
+        toStyle.setRightBorderColor(fromStyle.getRightBorderColor());
+        toStyle.setLeftBorderColor(fromStyle.getLeftBorderColor());
+
         System.out.println(toStyle.getLeftBorderColor());
         /*System.out.println(color);*/
 
         //背景和前景
-        if(fromStyle instanceof  XSSFCellStyle){
+        /*if(fromStyle instanceof  XSSFCellStyle){
             if(fromStyle.getFillBackgroundColorColor()!=null){
                 System.out.println(fromStyle.getFillBackgroundColorColor());
             }
@@ -130,7 +139,55 @@ public class MyWork {
             toStyle.setFillForegroundColor(fromStyle.getFillForegroundColor());
         }
         toStyle.setDataFormat(fromStyle.getDataFormat());
-        toStyle.setFillPattern(fromStyle.getFillPatternEnum());
+        toStyle.setFillPattern(fromStyle.getFillPatternEnum());*/
+//    toStyle.setFont(fromStyle.getFont(null)); // 没有提供get 方法
+       /* if (fromStyle instanceof XSSFCellStyle) {
+            // 处理字体获取：03版 xls
+            XSSFCellStyle style = (XSSFCellStyle) fromStyle;
+            toStyle.setFont(style.getFont());
+        } else if (fromStyle instanceof XSSFCellStyle) {
+            // 处理字体获取：07版以及之后 xlsx
+            XSSFCellStyle style = (XSSFCellStyle) fromStyle;
+            toStyle.setFont(style.getFont());
+        }*/
+        toStyle.setHidden(fromStyle.getHidden());
+        toStyle.setIndention(fromStyle.getIndention());//首行缩进
+        toStyle.setLocked(fromStyle.getLocked());
+        toStyle.setRotation(fromStyle.getRotation());//旋转
+        toStyle.setWrapText(fromStyle.getWrapText());
+    }
+
+    public static void copyCellStyle(XSSFCellStyle fromStyle, XSSFCellStyle toStyle) {
+        //边框和边框颜色
+        toStyle.setBorderBottom(fromStyle.getBorderBottomEnum());
+        toStyle.setBorderLeft(fromStyle.getBorderLeftEnum());
+        toStyle.setBorderRight(fromStyle.getBorderRightEnum());
+        toStyle.setBorderTop(fromStyle.getBorderTopEnum());
+
+        toStyle.setTopBorderColor(fromStyle.getTopBorderColor());
+        toStyle.setBottomBorderColor(fromStyle.getBottomBorderColor());
+        toStyle.setRightBorderColor(fromStyle.getRightBorderColor());
+        toStyle.setLeftBorderColor(fromStyle.getLeftBorderColor());
+
+        System.out.println(fromStyle.getBorderTopEnum());
+        /*System.out.println(color);*/
+
+        //背景和前景
+        /*if(fromStyle instanceof  XSSFCellStyle){
+            if(fromStyle.getFillBackgroundColorColor()!=null){
+                System.out.println(fromStyle.getFillBackgroundColorColor());
+            }
+            if(fromStyle.getFillForegroundColorColor()!=null){
+                System.out.println(fromStyle.getFillForegroundColorColor());
+            }
+            toStyle.setFillBackgroundColor(fromStyle.getFillBackgroundColorColor());
+            toStyle.setFillForegroundColor(fromStyle.getFillForegroundColorColor());
+        }else {
+            toStyle.setFillBackgroundColor(fromStyle.getFillBackgroundColor());
+            toStyle.setFillForegroundColor(fromStyle.getFillForegroundColor());
+        }
+        toStyle.setDataFormat(fromStyle.getDataFormat());
+        toStyle.setFillPattern(fromStyle.getFillPatternEnum());*/
 //    toStyle.setFont(fromStyle.getFont(null)); // 没有提供get 方法
        /* if (fromStyle instanceof XSSFCellStyle) {
             // 处理字体获取：03版 xls

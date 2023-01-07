@@ -29,7 +29,7 @@ class ExceldecmentApplicationTests {
             //获取单元格
             for (Cell cell : cells) {
                 //获取内容
-                System.out.println();
+                System.out.println(cell.getStringCellValue());
             }
         }
         workbook.close();
@@ -57,13 +57,17 @@ class ExceldecmentApplicationTests {
            DASHED为虚线
         */
         style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(col);
+        style.setBottomBorderColor((short) 0);
         style.setBorderLeft(BorderStyle.THIN);
-        style.setLeftBorderColor(col);
-        style.setBorderRight(BorderStyle.THIN);
-        style.setRightBorderColor(col);
+        style.setLeftBorderColor((short) 0);
+
         style.setBorderTop(BorderStyle.THIN);
-        style.setTopBorderColor(col);
+        style.setTopBorderColor((short) 0);
+
+        style.setBorderRight(style.getBorderTopEnum());
+        style.setRightBorderColor((short) 0);
+        //输出一些参数
+        System.out.println(style.getBorderTopEnum());
         //创建一个sheet
         Sheet sheet = workbook.createSheet("sheet1");
         //创建工作行
@@ -71,6 +75,7 @@ class ExceldecmentApplicationTests {
         Cell cell = row.createCell(0);
         cell.setCellValue("00123123131");
         cell.setCellStyle(style);
+        cell.getCellStyle();
         row.createCell(1).setCellValue("01");
         row.createCell(2).setCellValue("02");
         row.createCell(3).setCellValue("03");
