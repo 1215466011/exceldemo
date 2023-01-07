@@ -1,15 +1,12 @@
 package com.fcg.exceldecment;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
+import javafx.scene.layout.Border;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -32,8 +29,7 @@ class ExceldecmentApplicationTests {
             //获取单元格
             for (Cell cell : cells) {
                 //获取内容
-                String result = cell.getStringCellValue();
-                System.out.println(result);
+                System.out.println();
             }
         }
         workbook.close();
@@ -41,8 +37,59 @@ class ExceldecmentApplicationTests {
 
     //创建一个带皮肤的excel
     @Test
-    void createexcel (){
+    void createexcel () throws IOException {
+        //创建一个工作簿
+        Workbook workbook = new XSSFWorkbook();
+        Color color = new XSSFColor(new java.awt.Color(22, 253, 22));
+        short col = 0;
+        //这是样式
+        CellStyle style = workbook.createCellStyle();
+        /*//背景填充
+        style.setFillBackgroundColor(col);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);*/
+        /*边框填充
+        参数THICK MEDIUM为厚的
 
+        参数DOTTED
+           SLANTED_DASH_DOT
+           DASH_DOT_DOT
+           MEDIUM_DASH_DOT_DOT
+           DASHED为虚线
+        */
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBottomBorderColor(col);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setLeftBorderColor(col);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setRightBorderColor(col);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setTopBorderColor(col);
+        //创建一个sheet
+        Sheet sheet = workbook.createSheet("sheet1");
+        //创建工作行
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        cell.setCellValue("00123123131");
+        cell.setCellStyle(style);
+        row.createCell(1).setCellValue("01");
+        row.createCell(2).setCellValue("02");
+        row.createCell(3).setCellValue("03");
+        row.createCell(4).setCellValue("04");
+
+        Row row1 = sheet.createRow(1);
+        row1.createCell(0).setCellValue("10");
+        row1.createCell(1).setCellValue("11");
+        row1.createCell(2).setCellValue("12");
+        row1.createCell(3).setCellValue("13");
+        row1.createCell(4).setCellValue("14");
+
+
+
+        FileOutputStream outputStream = new FileOutputStream("E:\\textwork\\new work.xlsx");
+        workbook.write(outputStream);
+        outputStream.flush();
+        outputStream.close();
+        workbook.close();
     }
     //写入工作簿
     @Test
