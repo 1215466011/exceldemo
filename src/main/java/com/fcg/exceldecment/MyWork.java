@@ -6,10 +6,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 import org.w3c.dom.css.RGBColor;
@@ -29,7 +26,6 @@ public class MyWork {
         // 创建新的excel
         XSSFWorkbook wbCreat = new XSSFWorkbook();
         File file = new File(fromPath);
-
         for (File excel : file.listFiles()) {
         // 打开已有的excel
             excelName = excel.getName();
@@ -44,7 +40,7 @@ public class MyWork {
                 MergerRegion(sheetCreat, sheet);
                 int firstRow = sheet.getFirstRowNum();
                 int lastRow = sheet.getLastRowNum();
-                System.out.println(firstRow+"-----"+lastRow);
+
                 for (int i = firstRow; i <= lastRow; i++) {
                 // 创建新建excel Sheet的行
                     XSSFRow rowCreat = sheetCreat.createRow(i);
@@ -60,32 +56,26 @@ public class MyWork {
                     }
                     for (int j = firstCell; j < lastCell; j++) {
                         //新格子
-                        XSSFCell tocell = rowCreat.getCell(j);
+                        rowCreat.createCell(j);
+                        XSSFCell tocell =rowCreat.getCell(j);
                         //去的源格子
                         XSSFCell fromcell = row.getCell(j);
                         //自适应行高
                         row.setZeroHeight(true);
                         //自适应列宽
                         rowCreat.createCell(j);
-                        String strVal ="";
-                        double numValue=0;
-                        boolean flag = true;
-                        if (row.getCell(j)==null) {}else{
+                        if (row.getCell(j).getRawValue()==null ||"".equals(row.getCell(j).getRawValue())) {}else{
                             String cetype = fromcell.getCellTypeEnum().toString();
                             fromcell.setCellType( fromcell.getCellTypeEnum());
                             if("STRING".equals(cetype)){
-                                System.out.println("这个格子是字符串类型");
-                                strVal = fromcell.getStringCellValue();
-                                rowCreat.getCell(j).setCellValue(strVal);
+                                rowCreat.getCell(j).setCellValue(fromcell.getStringCellValue());
                             }else{
-                                System.out.println("这个格子是数据类型");
-                                numValue = fromcell.getNumericCellValue();
-                                rowCreat.getCell(j).setCellValue(numValue);
+                                rowCreat.getCell(j).setCellValue(fromcell.getNumericCellValue());
                             }
                         }
-                        //设置边框
-                       /* copyCellStyle(fromcell.getCellStyle(),wbCreat.createCellStyle());
-                        tocell.setCellStyle(wbCreat.createCellStyle());*/
+                        CellStyle style = wbCreat.createCellStyle();
+                        copyCellStyle(fromcell.getCellStyle(),style);
+                        tocell.setCellStyle(style);
                     }
                 }
             }
@@ -99,26 +89,11 @@ public class MyWork {
 
         wbCreat.close();
     }
+/*
     public static void copyCellStyle(XSSFWorkbook workbook, XSSFCellStyle fromStyle, XSSFCellStyle toStyle) {
-        // 水平垂直对齐方式
-        toStyle.setAlignment(fromStyle.getAlignmentEnum());
-        toStyle.setVerticalAlignment(fromStyle.getVerticalAlignmentEnum());
-        //边框和边框颜色
-        toStyle.setBorderBottom(fromStyle.getBorderBottomEnum());
-        toStyle.setBorderLeft(fromStyle.getBorderLeftEnum());
-        toStyle.setBorderRight(fromStyle.getBorderRightEnum());
-        toStyle.setBorderTop(fromStyle.getBorderTopEnum());
-
-        toStyle.setTopBorderColor(fromStyle.getTopBorderColor());
-        toStyle.setBottomBorderColor(fromStyle.getBottomBorderColor());
-        toStyle.setRightBorderColor(fromStyle.getRightBorderColor());
-        toStyle.setLeftBorderColor(fromStyle.getLeftBorderColor());
-
-        System.out.println(toStyle.getLeftBorderColor());
-        /*System.out.println(color);*/
-
         //背景和前景
-        /*if(fromStyle instanceof  XSSFCellStyle){
+        */
+/*if(fromStyle instanceof  XSSFCellStyle){
             if(fromStyle.getFillBackgroundColorColor()!=null){
                 System.out.println(fromStyle.getFillBackgroundColorColor());
             }
@@ -132,9 +107,11 @@ public class MyWork {
             toStyle.setFillForegroundColor(fromStyle.getFillForegroundColor());
         }
         toStyle.setDataFormat(fromStyle.getDataFormat());
-        toStyle.setFillPattern(fromStyle.getFillPatternEnum());*/
+        toStyle.setFillPattern(fromStyle.getFillPatternEnum());*//*
+
 //    toStyle.setFont(fromStyle.getFont(null)); // 没有提供get 方法
-       /* if (fromStyle instanceof XSSFCellStyle) {
+       */
+/* if (fromStyle instanceof XSSFCellStyle) {
             // 处理字体获取：03版 xls
             XSSFCellStyle style = (XSSFCellStyle) fromStyle;
             toStyle.setFont(style.getFont());
@@ -142,26 +119,33 @@ public class MyWork {
             // 处理字体获取：07版以及之后 xlsx
             XSSFCellStyle style = (XSSFCellStyle) fromStyle;
             toStyle.setFont(style.getFont());
-        }*/
+        }*//*
+
         toStyle.setHidden(fromStyle.getHidden());
         toStyle.setIndention(fromStyle.getIndention());//首行缩进
         toStyle.setLocked(fromStyle.getLocked());
         toStyle.setRotation(fromStyle.getRotation());//旋转
         toStyle.setWrapText(fromStyle.getWrapText());
     }
+*/
 
-    public static void copyCellStyle(XSSFCellStyle fromStyle, XSSFCellStyle toStyle) {
+    public static void copyCellStyle(XSSFCellStyle fromStyle, CellStyle style) {
+
+        // 水平垂直对齐方式
+        style.setAlignment(fromStyle.getAlignmentEnum());
+        style.setVerticalAlignment(fromStyle.getVerticalAlignmentEnum());
+
         //边框和边框颜色
-        toStyle.setBorderBottom(fromStyle.getBorderBottomEnum());
-        toStyle.setBorderLeft(fromStyle.getBorderLeftEnum());
-        toStyle.setBorderRight(fromStyle.getBorderRightEnum());
-        toStyle.setBorderTop(fromStyle.getBorderTopEnum());
+        style.setBorderBottom(fromStyle.getBorderBottomEnum());
+        style.setBorderLeft(fromStyle.getBorderLeftEnum());
+        style.setBorderRight(fromStyle.getBorderRightEnum());
+        style.setBorderTop(fromStyle.getBorderTopEnum());
 
-        toStyle.setTopBorderColor(fromStyle.getTopBorderColor());
-        toStyle.setBottomBorderColor(fromStyle.getBottomBorderColor());
-        toStyle.setRightBorderColor(fromStyle.getRightBorderColor());
-        toStyle.setLeftBorderColor(fromStyle.getLeftBorderColor());
-        System.out.println("1");
+        style.setTopBorderColor(fromStyle.getTopBorderColor());
+        style.setBottomBorderColor(fromStyle.getBottomBorderColor());
+        style.setRightBorderColor(fromStyle.getRightBorderColor());
+        style.setLeftBorderColor(fromStyle.getLeftBorderColor());
+
     }
      private static void MergerRegion(XSSFSheet sheetCreat, XSSFSheet sheet) {
         int sheetMergerCount = sheet.getNumMergedRegions();
